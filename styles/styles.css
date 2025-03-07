@@ -106,3 +106,51 @@ ul {
 .swiper-pagination-bullet-active {
     background: var(--accent);
 }
+
+.swiper-horizontal > .swiper-pagination-bullets {
+    bottom: var(--swiper-pagination-bottom, -5px);
+}
+
+/* LIST OF ARTS */
+
+.artworks {
+    margin-top: 100px;
+}
+
+.artworks__list {
+    width: 100%;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.artworks__item.card {
+    /* flex-grow: 1; */
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    box-sizing:border-box;
+    border: 1px solid var(--accent);
+    border-radius: 20px;
+    width: 300px;
+    max-width: calc(100% / 4 - 20px);
+    /* min-width: fit-content; */
+}
+
+.card__img {
+    width: 200px;
+    height: 200px;
+    margin-bottom: 15px;
+    align-self:center;
+    object-fit: contain;
+}
+
+.card p {
+    padding: 0;
+    margin: 0;
+    word-wrap: break-word;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--text);
+}
