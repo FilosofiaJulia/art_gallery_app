@@ -7,9 +7,13 @@ function sendRequest({url}) {
 
 sendRequest({url: '?page=2&limit=100&fields=id,title,image_id,date_start,date_end,date_display,artist_title,description,artwork_type_title'})
 .then((response) => {
-    return response.json();
+    if (response.ok) {
+        return response.json();
+    }
+    return Promise.reject(response);
 })
 .then(function(data) {
+    isServer();
     let myData = data; 
     let dataConfig = data.config; // для формирования ссылки на изображения
     let artWorkData = data.data; // массив с данными о произведениях искусства
@@ -19,10 +23,11 @@ sendRequest({url: '?page=2&limit=100&fields=id,title,image_id,date_start,date_en
             createCard(artWorkData[i], dataConfig);
             createSlide(artWorkData[i], dataConfig);
         }
-    } 
+    }
 })
-.catch(err => {
-    console.error('Ошибка при получении данных', err);
+.catch(error => {
+    noServer();
+    console.log('Ошибка при получении данных', error.status);
 });
 
 
@@ -98,3 +103,43 @@ var swiper = new Swiper(".artSwiper", {
     },
     initialSlide: 1,
 });
+
+/* loader */
+
+function showLoader() {
+    let loader = document.querySelector('.preloader');
+    if (loader.classList.contains('visually-hidden')) {
+        loader.classList.remove('visually-hidden');
+    }
+}
+
+function removeLoader() {
+    const loader = document.querySelector('.preloader');
+    if (!loader.classList.contains('visually-hidden')) {
+        loader.classList.add('visually-hidden');
+    } 
+}
+
+/* error */
+function noServer() {
+    if (!document.body.classList.contains('no-server')) {
+        document.body.classList.add('no-server');
+        let titlesSection = document.querySelectorAll('h2');
+        titlesSection.forEach(el=>{
+            el.classList.add('visually-hidden');
+        })
+        let errorMessage = createElem('div', 'no-server__message');
+        errorMessage.textContent = 'The gallery is temporarily closed... Try again later!'
+        document.body.appendChild(errorMessage);
+    }
+}
+
+function isServer() {
+    if (document.body.classList.contains('no-server')) {
+        document.body.classList.remove('no-server');
+        let titlesSection = document.querySelectorAll('h2');
+        titlesSection.forEach(el=>{
+            el.classList.remove('visually-hidden');
+        })
+    }
+}

@@ -10,9 +10,25 @@ body {
     position: relative;
     font-family: "Montserrat Alternates", sans-serif;
     font-weight: 500;
-    margin: 0px;
+    margin: 0;
+    padding: 0;
     line-height: 1.6;
     background-color: var(--bg);
+}
+
+.no-server {
+    margin: 0 auto;
+    width: 100%;
+    height: 100vh;
+    background-image: url(../image/bg.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.no-server .no-server__message {
+    margin: 0 auto;
+    text-align: center;
+    color: var(--accent);
 }
 
 a {
@@ -31,6 +47,10 @@ button:focus {
 
 ul {
     list-style-type: none;
+}
+
+.visually-hidden {
+    display: none;
 }
 
 .container {
@@ -86,15 +106,19 @@ ul {
 
 .slide__image {
     display: block;
-    object-fit: cover;
+    object-fit: contain;
     max-height: 80vh;
     width: 100%;
+    font-weight: 200;
+    font-size: 14px;
+    text-align: center;
+    color: var(--bg);
 }
 
 .slide__title, .slide__artist {
     margin: 0;
     font-weight: 200;
-    font-size: 16px;
+    font-size: 14px;
     text-align: center;
     color: var(--accent);
 }
@@ -114,11 +138,12 @@ ul {
 /* LIST OF ARTS */
 
 .artworks {
-    margin-top: 100px;
+    margin-top: 60px;
 }
 
 .artworks__list {
     width: 100%;
+    padding: 0;
     display: flex;
     flex-flow: row wrap;
     justify-content: center;
@@ -126,7 +151,6 @@ ul {
 }
 
 .artworks__item.card {
-    /* flex-grow: 1; */
     position: relative;
     display: flex;
     flex-direction: column;
@@ -134,7 +158,6 @@ ul {
     box-sizing:border-box;
     width: 300px;
     max-width: calc(100% / 4 - 20px);
-    /* min-width: fit-content; */
 }
 
 .card__img {
@@ -188,7 +211,7 @@ ul {
     border: none;
     padding: 10px;
     cursor: pointer;
-    transition: transform 0.2s ease;
+    transition: transform 0.2s cubic-bezier(0.22,0.61,0.36,1);
 }
 
 .card__btn.shake { 
@@ -208,3 +231,110 @@ ul {
     50%{transform:translateX(5px)}
     75%{transform:translateX(-5px)}
 }
+
+/* collection */
+
+.collection {
+    margin-top: 80px;
+}
+
+.collection h2 {
+    font-size: 28px;
+    font-weight: 900;
+    text-transform: uppercase;
+    text-align: center;
+    color: var(--text);
+}
+
+/*  loader */
+
+.preloader {
+    margin: 0 auto;
+    position: absolute;
+    width: 100%;
+    height: 100vh;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--bg); 
+    overflow: hidden;
+    opacity: 1;
+    transition: opacity 1s cubic-bezier(0.22,0.61,0.36,1);
+    z-index: 2; 
+}
+.preloader.visually-hidden {
+    display: none;
+}
+
+#loader {
+    height: 100px;
+    width: 100px;
+  }
+  
+  #pen1 {
+    animation: pen1 2s infinite ease;
+  }
+  
+  #pen2 {
+    animation: pen2 2s infinite ease;
+  }
+  
+  #pen3 {
+    animation: pen3 2s infinite ease;
+  }
+  
+  #loader {
+    animation: loaderColor 5s infinite ease;
+  }
+  
+  @keyframes pen1 {
+    0% {
+      transform: translateY(0px);
+    }
+    15% {
+      transform: translateY(-10px);
+    }
+    30% {
+      transform: translateY(0px);
+    }
+  }
+  
+  @keyframes pen2 {
+    30% {
+      transform: translateY(0px);
+    }
+    45% {
+      transform: translateY(-10px);
+    }
+    60% {
+      transform: translateY(0px);
+    }
+  }
+  
+  @keyframes pen3 {
+    60% {
+      transform: translateY(0px);
+    }
+    75% {
+      transform: translateY(-10px);
+    }
+    90% {
+      transform: translateY(0px);
+    }
+  }
+  
+  @keyframes loaderColor {
+    0% {
+      fill: #513B56;
+    }
+    33% {
+      fill: #348AA7;
+    }
+    66% {
+      fill: #5DD39E;
+    }
+    100% {
+      fill: #513B56;
+    }
+  }
