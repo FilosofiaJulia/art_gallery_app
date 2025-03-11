@@ -1,54 +1,51 @@
 /* API */
-const BASE_SERVER_PATH = 'https://api.artic.edu/api/v1/artworks';
+const BASE_SERVER_PATH = 'https://api.artic.edu/api/v1';
+const ARTWORKS_SERVER_PATH = BASE_SERVER_PATH  + '/artworks';
+
 let myData;
+let dataConfig; // для формирования ссылки на изображения
+let artWorkData; // массив с данными о произведениях искусства
 
 function sendRequest({url}) {
-    return fetch(BASE_SERVER_PATH + url);
+    return fetch(url);
 }
 
-sendRequest({url: '?page=2&limit=100&fields=id,title,image_id,date_start,date_end,date_display,artist_title,description,artwork_type_title'})
-.then((response) => {
-    if (response.ok) {
-        return response.json();
-    }
-    return Promise.reject(response);
-})
-.then(function(data) {
-    isServer();
-    myData = data; 
-    let dataConfig = data.config; // для формирования ссылки на изображения
-    let artWorkData = data.data; // массив с данными о произведениях искусства
-    console.log(myData);
+function getArtWorks() {
+    const paramFields = 'id,title,image_id,date_start,date_end,date_display,artist_title,description,artwork_type_title';
+    const paramLimit = '100';
+    const queryParams = '?page=1&limit=' + paramLimit + '&fields=' + paramFields;
+    sendRequest({url: ARTWORKS_SERVER_PATH + queryParams})
+    .then((response) => {
+        if (response.ok) {
+            return response.json();
+        }
+        return Promise.reject(response);
+    })
+    .then(function(data) {
+        isServer();
+        myData = data; 
+        dataConfig = data.config; // для формирования ссылки на изображения
+        artWorkData = data.data; // массив с данными о произведениях искусства
+        console.log(myData);
+        
+        createCardsList();
+    })
+    .catch(error => {
+        noServer();
+        console.log('Ошибка при получении данных', error.status);
+    });
+}
+
+getArtWorks();
+
+function createCardsList() {
     for (let i = 0; i <= artWorkData.length - 1; i++) {
         if (artWorkData[i].artwork_type_title === "Painting") {
             createCard(artWorkData[i], dataConfig);
-            //createSlide(artWorkData[i], dataConfig);
         }
     }
-    // функция обработчиков для кнопок-лайков
+    // функция обработчиков для кнопок-лайков УБРАТЬ ЕЁ !!!
     initializeButtons();
-
-})
-.catch(error => {
-    noServer();
-    console.log('Ошибка при получении данных', error.status);
-});
-
-
-// cоздание структуры слайда
-
-function createSlide(dataSlide, config) {
-    const slider = document.querySelector('.slider');
-    let slide = createElem('div', 'swiper-slide slide');
-    let slideImg = createImage('slide__image', config, dataSlide);
-    let slideArtist = createElem('h4', 'slide__artist');
-    slideArtist.textContent = `${dataSlide.artist_title || ''}`;
-    let slideTitle = createElem('h3', 'slide__title');
-    slideTitle.textContent = `« ${dataSlide.title || 'unknown'} »  `;
-    slide.appendChild(slideArtist);
-    slide.appendChild(slideTitle);
-    slide.appendChild(slideImg);
-    slider.appendChild(slide);
 }
 
 // cоздание карточки с произведением искусства
@@ -71,7 +68,7 @@ function createCard(data, config) {
     cardDescription.appendChild(cardYears);
     card.appendChild(cardDescription);
     cardList.appendChild(card);
-
+// переделать через appendChild  и сразу повесить клик
     card.insertAdjacentHTML('afterbegin', '<button class="card__btn"><svg width="800px" height="800px" viewBox="0 0 24 24"><path d="M14 20.408c-.492.308-.903.546-1.192.709-.153.086-.308.17-.463.252h-.002a.75.75 0 01-.686 0 16.709 16.709 0 01-.465-.252 31.147 31.147 0 01-4.803-3.34C3.8 15.572 1 12.331 1 8.513 1 5.052 3.829 2.5 6.736 2.5 9.03 2.5 10.881 3.726 12 5.605 13.12 3.726 14.97 2.5 17.264 2.5 20.17 2.5 23 5.052 23 8.514c0 3.818-2.801 7.06-5.389 9.262A31.146 31.146 0 0114 20.408z"/></svg</button>');
 }
 /* !!!!!!!!!!!!!!!https://habr.com/ru/articles/647359/ */
@@ -91,13 +88,17 @@ function updateFavoritesDisplay(data, config) {
     const favorites = getFavorites(); //  сюда должен прийти объект
     const favoritesList = document.querySelector('.collection__list');
     const artworksElements = document.querySelectorAll('.artworks .artworks__list .card');
+ 
+    favoritesList.innerHTML = ''; // Очищаем блок избранных картин
+
+    const favoritesIds = Object.keys(favorites).map(Number); // перевела в числа строки
     // Отображаем избранные картины
-    favorites.forEach(art => {
+    favoritesIds.forEach(art => {
         console.log(art);
         console.log(data.id);
 /* ИСПРАВИТЬ ЗДЕСЬ, данные должны подгружаться не из АПИ, а из localStorage
 В localStorage надо положить не только id но и другие нужные поля для генерации списка.  */
-        if (art == data.id) {
+        if (art === data.id) {
             let card = createElem('li', 'collection__item card');
             let cardDescription = createElem('div', 'card__description');
             card.setAttribute('id', `${data.id}`);
@@ -142,12 +143,12 @@ function addFavorite(favoriteArt) {
     const favorites = getFavorites();
     console.log(favorites);
 
-    if (!favorites.includes(idFavoriteArt)) {
+    /* if (!favorites.includes(idFavoriteArt)) {
         favorites.push(idFavoriteArt);
         saveFavorites(favorites);
         console.log(favorites);
         updateFavoritesDisplay(data, config);
-    }
+    } */
 }
 
 // Удаляем картину из избранного
@@ -162,6 +163,7 @@ function initializeButtons() {
     let likeButtons = document.querySelectorAll('.artworks .artworks__list .card .card__btn');
     likeButtons.forEach(button => {
         const idFavoriteArt = button.parentElement.id;
+        // получить все данные вместе с 
         button.addEventListener('click', () => {
             console.log(idFavoriteArt);
             addFavorite(idFavoriteArt);
@@ -186,6 +188,23 @@ function createImage(className, config, data) {
 }
 
 /* SLIDER */
+
+// cоздание структуры слайда
+
+function createSlide(dataSlide, config) {
+    const slider = document.querySelector('.slider');
+    let slide = createElem('div', 'swiper-slide slide');
+    let slideImg = createImage('slide__image', config, dataSlide);
+    let slideArtist = createElem('h4', 'slide__artist');
+    slideArtist.textContent = `${dataSlide.artist_title || ''}`;
+    let slideTitle = createElem('h3', 'slide__title');
+    slideTitle.textContent = `« ${dataSlide.title || 'unknown'} »  `;
+    slide.appendChild(slideArtist);
+    slide.appendChild(slideTitle);
+    slide.appendChild(slideImg);
+    slider.appendChild(slide);
+}
+
 var swiper = new Swiper(".artSwiper", {
     effect: "coverflow",
     grabCursor: true,
