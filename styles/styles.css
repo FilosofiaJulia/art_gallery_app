@@ -149,6 +149,9 @@ ul {
   flex-flow: row wrap;
   justify-content: center;
   gap: 20px;
+  color: var(--accent);
+  font-weight: 400;
+  font-size: 20px;
 }
 
 .card {

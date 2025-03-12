@@ -27,7 +27,7 @@ function getArtWorks() {
         dataConfig = data.config; // для формирования ссылки на изображения
         artWorkData = data.data; // массив с данными о произведениях искусства
         console.log(myData);
-        
+        initPage();
         createCardsList();
     })
     .catch(error => {
@@ -38,7 +38,39 @@ function getArtWorks() {
 
 getArtWorks();
 
+function initPage() {
+    const favorites = getFavorites();
+    let listOfFavoriteCards = document.querySelector('.collection__list');
+    let artWorkCards = document.querySelectorAll('.artworks__list .card');
+
+    listOfFavoriteCards.innerHTML = '';
+    
+    if (Object.keys(favorites).length === 0) {
+        listOfFavoriteCards.innerHTML = 'Add your favorite paintings!';
+    };
+
+    // отрисовываем карточки,хранящиеся в localStorage, в списке избранного
+    if (Object.keys(favorites).length !== 0) {
+        for (var key in favorites) {
+            createFavoriteCard(favorites[key]);
+        }
+    };
+        
+    // Обновляем цвет иконок SVG у кнопок-лайков
+    artWorkCards.forEach(artCard => {
+        const artWorkId = artCard.dataset.id; // получаем id картщчки из обычного списка
+        const favoritesIds = Object.keys(favorites); // получаем все id имеющиеся в хранилище
+        const svg = artCard.querySelector('svg');
+        svg.style.fill = favoritesIds.includes(artWorkId) ? '#b4241a' : '#f5f0ec';
+        
+       // удаляем анимацию для кнопок-лайков
+        const artworkBtn = artCard.querySelector('.card__btn_like');
+       if (artworkBtn.classList.contains("shake")) artworkBtn.classList.remove("shake");
+    }); 
+}
+
 function createCardsList() {
+    let favorites = getFavorites();
     const cardList = document.querySelector('.artworks__list');
 
     for (let i = 0; i <= artWorkData.length - 1; i++) {
@@ -50,6 +82,11 @@ function createCardsList() {
             likeBtn.innerHTML = '<svg width="800px" height="800px" viewBox="0 0 24 24"><path d="M14 20.408c-.492.308-.903.546-1.192.709-.153.086-.308.17-.463.252h-.002a.75.75 0 01-.686 0 16.709 16.709 0 01-.465-.252 31.147 31.147 0 01-4.803-3.34C3.8 15.572 1 12.331 1 8.513 1 5.052 3.829 2.5 6.736 2.5 9.03 2.5 10.881 3.726 12 5.605 13.12 3.726 14.97 2.5 17.264 2.5 20.17 2.5 23 5.052 23 8.514c0 3.818-2.801 7.06-5.389 9.262A31.146 31.146 0 0114 20.408z"/></svg>';
             artWorkCard.appendChild(cardImg);
             artWorkCard.appendChild(likeBtn);
+            
+            const artWorkId = artWorkCard.dataset.id; // получаем id картщчки из обычного списка
+            let favoritesIds = Object.keys(favorites); // получаем все id имеющиеся в хранилище
+            const svg = artWorkCard.querySelector('svg');
+            svg.style.fill = favoritesIds.includes(artWorkId) ? '#b4241a' : '#f5f0ec';
 
             likeBtn.addEventListener('click', () => {
                 let favoriteArt = new Object();
@@ -58,7 +95,6 @@ function createCardsList() {
                 favoriteArt.artist_title = artWorkData[i].artist_title;
                 favoriteArt.date_display = artWorkData[i].date_display;
                 favoriteArt.image = `${dataConfig.iiif_url}/${artWorkData[i].image_id}/full/843,/0/default.jpg`;
-                console.log(favoriteArt);
                 addFavorite(favoriteArt);
                 likeBtn.classList.add("shake"); // Добавляем анимацию для кнопок-лайков
             });
@@ -66,11 +102,8 @@ function createCardsList() {
         }
     }
 }
-// TODO карточки после загрузки, если есть в хранилище, должны быть отрисованы при загрузке странцы!!!!!!
-// добавить функцию initPage
 
 // cоздание базовой карточки без кнопок
-
 function createBaseCard(data) {
     let card = createElem('li', 'card');
     let cardDescription = createElem('div', 'card__description');
@@ -100,6 +133,10 @@ function createFavoriteCard(favoriteArt) {
     favoriteCard.appendChild(cardImg);
     favoriteCard.appendChild(deleteBtn);
     listOfFavoriteCards.appendChild(favoriteCard);
+    
+    deleteBtn.addEventListener('click', () => {
+        removeFavorite(favoriteCard);
+    });
 }
 
 // Извлекает данные из localStorage или возвращает пустой массив
@@ -123,25 +160,27 @@ function addFavorite(favoriteArt) {
         favorites[`${favoriteArt.id}`] = favoriteArt;
         saveFavorites(favorites);
         createFavoriteCard(favoriteArt, dataConfig);
+        initPage();
     }
 }
 
 // Удаляем картину из избранного, сравнивая ключ объекта localStorage c data-id карточки
 function removeFavorite(favoriteCard) {
-    const favorites = getFavorites();
+    const favorites = getFavorites(); 
+
     if (Object.keys(favorites).length === 0) return;
     let favoriteCardId = favoriteCard.dataset.id;
 
-    const favoritesIds = Object.keys(favorites).map(Number); // перевела в числа строки
+    const favoritesIds = Object.keys(favorites);
     if (favoritesIds.includes(favoriteCardId)) {
-        delete favorites[`${artId}`];
+        delete favorites[favoriteCardId];
+        console.log(favorites);
         saveFavorites(favorites);
         if (favoriteCard) {
             favoriteCard.remove(); // удаляем элемент, если он действительно присутствует
         }
     }
-
-    //updateFavoritesDisplay(data, config);
+    initPage();
 }
 
 function createElem(tag, className) {
