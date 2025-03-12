@@ -60,12 +60,17 @@
     </main>
     <section id="my_collection" class="container collection">
         <h2 class="collection__title">Favorite arts</h2>
-        <div class="swiper artSwiper">
-            <div class="swiper-wrapper slider"></div>
-            <div class="swiper-pagination"></div>
-        </div>
         <ul class="collection__list"></ul>
     </section>
+    <div class="popup-slider popup-slider_js visually-hidden">
+        <button class="popup-slider__close-btn popup-slider__close-btn_js" type="button" tabindex="0" aria-label="close slider"></button>
+        <div>
+            <div class="swiper artSwiper">
+                <div class="swiper-wrapper slider"></div>
+                <div class="swiper-pagination"></div>
+            </div>
+        </div>
+    </div>
     <script src="./swiper-bundle.min.js"></script>
     <script src="./script.js"></script>
 </body>

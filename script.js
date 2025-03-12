@@ -13,7 +13,7 @@ function sendRequest({url}) {
 function getArtWorks() {
     const paramFields = 'id,title,image_id,date_start,date_end,date_display,artist_title,description,artwork_type_title';
     const paramLimit = '100';
-    const queryParams = '?page=1&limit=' + paramLimit + '&fields=' + paramFields;
+    const queryParams = '?page=3&limit=' + paramLimit + '&fields=' + paramFields;
     sendRequest({url: ARTWORKS_SERVER_PATH + queryParams})
     .then((response) => {
         if (response.ok) {
@@ -29,6 +29,7 @@ function getArtWorks() {
         console.log(myData);
         initPage();
         createCardsList();
+        popupSliderHandler();
     })
     .catch(error => {
         noServer();
@@ -75,6 +76,8 @@ function createCardsList() {
 
     for (let i = 0; i <= artWorkData.length - 1; i++) {
         if (artWorkData[i].artwork_type_title === "Painting") {
+
+            createSlide(artWorkData[i], dataConfig);
             let artWorkCard = createBaseCard(artWorkData[i]);
             artWorkCard.dataset.id = `${artWorkData[i].id}`;
             let cardImg = createImage('card__img', dataConfig, artWorkData[i]);
@@ -205,6 +208,7 @@ function createImage(className, config, data) {
 function createSlide(dataSlide, config) {
     const slider = document.querySelector('.slider');
     let slide = createElem('div', 'swiper-slide slide');
+    slide.dataset.id = `${dataSlide.id}`;
     let slideImg = createImage('slide__image', config, dataSlide);
     let slideArtist = createElem('h4', 'slide__artist');
     slideArtist.textContent = `${dataSlide.artist_title || ''}`;
@@ -216,7 +220,9 @@ function createSlide(dataSlide, config) {
     slider.appendChild(slide);
 }
 
+// TODO не подтягиваются стили перспективы, пока не изменишь размер области видимости
 var swiper = new Swiper(".artSwiper", {
+    init: false,
     effect: "coverflow",
     grabCursor: true,
     centeredSlides: true,
@@ -234,6 +240,52 @@ var swiper = new Swiper(".artSwiper", {
     },
     initialSlide: 1,
 });
+
+
+function popupSliderHandler() {
+    const popupSlider = document.querySelector(`.popup-slider_js`);
+    const closeSliderbtn = document.querySelector(`.popup-slider__close-btn_js`);
+    const openSliderElements = [...document.querySelectorAll('.artworks__list .card .card__description')];
+
+    if(!openSliderElements) return;
+
+    if(!popupSlider || !popupSlider.classList.contains('visually-hidden')) return;
+
+    openSliderElements.forEach(openSliderElem => {
+        
+        let slideNumber = openSliderElements.indexOf(openSliderElem); // TODO нужно передавать это значение в качестве значения параметра initialSlide в swiper 
+        openSliderElem.addEventListener('click', () => {
+            swiper.init();
+            openPopupSlider();
+        });
+    });
+
+    function openPopupSlider() {
+        window.scrollTo(0, 0);
+        popupSlider.classList.remove('visually-hidden');
+        document.body.classList.add('no-scroll');
+        window.addEventListener('keydown', escClosePopupSlider);
+        
+        if(closeSliderbtn) { 
+            closeSliderbtn.addEventListener('click', closePopupSlider);
+        }
+    }
+
+    function closePopupSlider() {
+        popupSlider.classList.add('visually-hidden');
+        document.body.classList.remove('no-scroll');
+        window.removeEventListener('keydown', escClosePopupSlider);
+        if(closeSliderbtn) { 
+            closeSliderbtn.removeEventListener('click', closePopupSlider);
+        }
+    } 
+
+    function escClosePopupSlider(e) {
+        if(e.code === "Escape" && !popupSlider.classList.contains('visually-hidden')) {
+            closePopupSlider();
+        }
+    }
+}
 
 /* loader */
 
@@ -274,3 +326,4 @@ function isServer() {
         })
     }
 }
+
