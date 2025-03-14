@@ -1,6 +1,7 @@
 /* API */
 const BASE_SERVER_PATH = 'https://api.artic.edu/api/v1';
 const ARTWORKS_SERVER_PATH = BASE_SERVER_PATH  + '/artworks';
+var swiper;
 //localStorage.clear();
 let myData;
 let dataConfig; // для формирования ссылки на изображения
@@ -220,26 +221,27 @@ function createSlide(dataSlide, config) {
     slider.appendChild(slide);
 }
 
-// TODO не подтягиваются стили перспективы, пока не изменишь размер области видимости
-var swiper = new Swiper(".artSwiper", {
-    init: false,
-    effect: "coverflow",
-    grabCursor: true,
-    centeredSlides: true,
-    slidesPerView: "auto",
-    coverflowEffect: {
-        rotate: 50,
-        stretch: 0,
-        depth: 80,
-        modifier: 1,
-        slideShadows: true,
-    },
-    pagination: {
-        el: ".swiper-pagination",
-        clickable: true,
-    },
-    initialSlide: 1,
+document.addEventListener("DOMContentLoaded", ()=> {
+    swiper = new Swiper(".artSwiper", {
+        init: false,
+        effect: "coverflow",
+        grabCursor: true,
+        centeredSlides: true,
+        slidesPerView: "auto",
+        coverflowEffect: {
+            rotate: 50,
+            stretch: 0,
+            depth: 80,
+            modifier: 1,
+            slideShadows: true,
+        },
+        pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+        },
+    });
 });
+
 
 
 function popupSliderHandler() {
@@ -256,7 +258,9 @@ function popupSliderHandler() {
         let slideNumber = openSliderElements.indexOf(openSliderElem); // TODO нужно передавать это значение в качестве значения параметра initialSlide в swiper 
         openSliderElem.addEventListener('click', () => {
             swiper.init();
+            swiper.slideTo(slideNumber);
             openPopupSlider();
+            swiper.update();
         });
     });
 
