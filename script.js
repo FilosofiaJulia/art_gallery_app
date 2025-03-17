@@ -64,7 +64,7 @@ function initPage() {
         const favoritesIds = Object.keys(favorites); // получаем все id имеющиеся в хранилище
         const svg = artCard.querySelector('svg');
         svg.style.fill = favoritesIds.includes(artWorkId) ? '#b4241a' : '#f5f0ec';
-        
+    
        // удаляем анимацию для кнопок-лайков
         const artworkBtn = artCard.querySelector('.card__btn_like');
        if (artworkBtn.classList.contains("shake")) artworkBtn.classList.remove("shake");
@@ -103,6 +103,9 @@ function createCardsList() {
                 likeBtn.classList.add("shake"); // Добавляем анимацию для кнопок-лайков
             });
             cardList.appendChild(artWorkCard);
+            let hover = gsap.to(artWorkCard, {rotationX: 10, rotationY: -10, duration: 0.4, paused: true, ease: "power1.inOut"});
+            artWorkCard.addEventListener("mouseenter", () => hover.play());
+            artWorkCard.addEventListener("mouseleave", () => hover.reverse());
         }
     }
 }
@@ -133,6 +136,7 @@ function createFavoriteCard(favoriteArt) {
     cardImg.className = 'card__img';
     cardImg.setAttribute('src', `${favoriteArt.image}`);
     cardImg.setAttribute('alt', `${favoriteArt.title}`);
+    //cardImg.setAttribute('onerror', `this.src="../image/no_photo.svg"; this.onerror=null;`);
     let deleteBtn = createElem('button', 'card__btn card__btn_delete');
     favoriteCard.appendChild(cardImg);
     favoriteCard.appendChild(deleteBtn);
@@ -141,6 +145,10 @@ function createFavoriteCard(favoriteArt) {
     deleteBtn.addEventListener('click', () => {
         removeFavorite(favoriteCard);
     });
+
+    let hover = gsap.to(favoriteCard, {rotationX: 10, rotationY: -10, duration: 0.4, paused: true, ease: "power1.inOut"});
+        favoriteCard.addEventListener("mouseenter", () => hover.play());
+        favoriteCard.addEventListener("mouseleave", () => hover.reverse());
 }
 
 // Извлекает данные из localStorage или возвращает пустой массив
@@ -198,6 +206,7 @@ function createImage(className, config, data) {
     elem.className = className;
     elem.setAttribute('src', `${config.iiif_url}/${data.image_id}/full/843,/0/default.jpg`);
     elem.setAttribute('alt', `${data.title}`);
+    //elem.setAttribute('onerror', `this.src="../image/no_photo.svg"; this.onerror=null;`);
     return elem;
 }
 
@@ -255,7 +264,7 @@ function popupSliderHandler() {
 
     openSliderElements.forEach(openSliderElem => {
         
-        let slideNumber = openSliderElements.indexOf(openSliderElem); // TODO нужно передавать это значение в качестве значения параметра initialSlide в swiper 
+        let slideNumber = openSliderElements.indexOf(openSliderElem); //  это значение передается в параметр initialSlide в swiper 
         openSliderElem.addEventListener('click', () => {
             swiper.init();
             swiper.slideTo(slideNumber);
@@ -330,4 +339,3 @@ function isServer() {
         })
     }
 }
-
