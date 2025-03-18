@@ -221,11 +221,16 @@ ul {
 
 .card__btn.card__btn_delete {
   margin: 5px;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   background-size: contain;
   background-repeat: no-repeat;
   background-image: url(../image/delete_icon.svg);
+  transition: opacity 0.4s;
+}
+
+.card__btn.card__btn_delete:hover {
+  opacity: 0.5;
 }
 
 /* collection */
@@ -429,4 +434,49 @@ ul {
   100% {
     fill: #513B56;
   }
+}
+
+/* progress bar */
+
+.progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  background-color: var(--card-bg);
+  align-items:center;
+  overflow: hidden;
+  border: 1px solid var(--accent);
+  z-index: 3;
+  border-radius: 5px
+}
+
+.progress-bar {
+  display: block;
+  overflow: hidden;
+  margin: 0 30px;
+  background-repeat: no-repeat;
+  background: rgb(47,67,39);
+  background: linear-gradient(90deg, rgba(255,255,255,1), rgba(47,67,39,0.7));
+  background-size: 200% 100%;
+  background-position: 200% 100%;
+  border-radius: 10px;
+  width: 100%;
+  height: 15px;
+  animation: gradient 5s linear infinite;
+  transition: background-position 2s;
+}
+
+@keyframes gradient {
+	0% {
+		background-position: 200% 100%;
+	}
+	50% {
+		background-position: 100% 0;
+	}
+	100% {
+		background-position: 0% 0%;
+	}
 }
