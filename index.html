@@ -24,14 +24,14 @@
     </div>
     <script> 
         window.onload = function () {
-            document.body.style.overflow = 'hidden';
+            document.body.classList.add('no-scroll');
             window.setTimeout(function () {
                 const loader = document.querySelector('.preloader');
                 if (!loader.classList.contains('visually-hidden')) {
                     loader.style.opacity = "0";
                     loader.addEventListener("transitionend", ()=> {
                         loader.classList.add('visually-hidden');
-                        document.body.style.overflow = 'scroll';
+                        document.body.classList.remove('no-scroll');
                     });
                 }
             }, 5000);
