@@ -79,15 +79,19 @@ function createCardsList() {
         if (artWorkData[i].artwork_type_title === "Painting") {
 
             createSlide(artWorkData[i], dataConfig);
+
             let artWorkCard = createBaseCard(artWorkData[i]);
             artWorkCard.dataset.id = `${artWorkData[i].id}`;
+
+// ЗДЕСЬ ДОЛЖЕН ВКЛЮЧИТСЯ ПРОГРЕСС БАР для карточки.
+
             let cardImg = createImage('card__img', dataConfig, artWorkData[i]);
             let likeBtn = createElem('button', 'card__btn card__btn_like');
             likeBtn.innerHTML = '<svg width="800px" height="800px" viewBox="0 0 24 24"><path d="M14 20.408c-.492.308-.903.546-1.192.709-.153.086-.308.17-.463.252h-.002a.75.75 0 01-.686 0 16.709 16.709 0 01-.465-.252 31.147 31.147 0 01-4.803-3.34C3.8 15.572 1 12.331 1 8.513 1 5.052 3.829 2.5 6.736 2.5 9.03 2.5 10.881 3.726 12 5.605 13.12 3.726 14.97 2.5 17.264 2.5 20.17 2.5 23 5.052 23 8.514c0 3.818-2.801 7.06-5.389 9.262A31.146 31.146 0 0114 20.408z"/></svg>';
             artWorkCard.appendChild(cardImg);
             artWorkCard.appendChild(likeBtn);
             
-            const artWorkId = artWorkCard.dataset.id; // получаем id картщчки из обычного списка
+            const artWorkId = artWorkCard.dataset.id; // получаем id карточки из обычного списка
             let favoritesIds = Object.keys(favorites); // получаем все id имеющиеся в хранилище
             const svg = artWorkCard.querySelector('svg');
             svg.style.fill = favoritesIds.includes(artWorkId) ? '#b4241a' : '#f5f0ec';
@@ -195,12 +199,6 @@ function removeFavorite(favoriteCard) {
     initPage();
 }
 
-function createElem(tag, className) {
-    let elem = document.createElement(tag);
-    elem.className = className;
-    return elem;
-}
-
 function createImage(className, config, data) {
     let elem = document.createElement('img');
     elem.className = className;
@@ -209,7 +207,6 @@ function createImage(className, config, data) {
     //elem.setAttribute('onerror', `this.src="../image/no_photo.svg"; this.onerror=null;`);
     return elem;
 }
-
 
 /* SLIDER */
 
@@ -250,8 +247,6 @@ document.addEventListener("DOMContentLoaded", ()=> {
         },
     });
 });
-
-
 
 function popupSliderHandler() {
     const popupSlider = document.querySelector(`.popup-slider_js`);
@@ -300,17 +295,23 @@ function popupSliderHandler() {
     }
 }
 
-/* loader */
+/* loaders */
+function createProgressBar() {
+    let wrapper = createElem('div', 'progress');
+    let progressBar = createElem('div', 'progress-bar');
+    wrapper.appendChild(progressBar);
+    return wrapper;
+}
 
-function showLoader() {
-    let loader = document.querySelector('.preloader');
+function showProgressBar() {
+    let loader = document.querySelector('.progress');
     if (loader.classList.contains('visually-hidden')) {
         loader.classList.remove('visually-hidden');
     }
 }
 
-function removeLoader() {
-    const loader = document.querySelector('.preloader');
+function removeProgressBar() {
+    const loader = document.querySelector('.progress');
     if (!loader.classList.contains('visually-hidden')) {
         loader.classList.add('visually-hidden');
     } 
@@ -338,4 +339,12 @@ function isServer() {
             el.classList.remove('visually-hidden');
         })
     }
+}
+
+/* handlers */
+
+function createElem(tag, className) {
+    let elem = document.createElement(tag);
+    elem.className = className;
+    return elem;
 }
