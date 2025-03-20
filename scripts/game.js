@@ -1,6 +1,8 @@
-//  Game difficulty buttons
-const gameBtns = [...document.querySelectorAll('.game__btn')];
+const gameBtns = [...document.querySelectorAll('.game__btn')]; //  Game difficulty buttons
 let difficultyGame;
+const imgPuzzle = choseImage();
+
+createScreenSaver(); // puzzle image as a screensaver
 
 gameBtns.forEach(btn => {
     btn.addEventListener('click', function(){
@@ -8,7 +10,8 @@ gameBtns.forEach(btn => {
         if (btn.classList.contains('middle')) difficultyGame = 3;
         if (btn.classList.contains('hard')) difficultyGame = 4;
 
-        initGame();
+        document.querySelector('.game__screen-saver').remove();
+        initGame(imgPuzzle);
     });
 })
 
@@ -24,7 +27,15 @@ function choseImage() {
     return randomImage;
 }
 
-function initGame() {
+function createScreenSaver() {
+    const gameBox = document.querySelector('.game__wrapper');
+    let splashImg = document.createElement('img');
+    splashImg.className = 'game__screen-saver';
+    splashImg.setAttribute('src', `${imgPuzzle}`);
+    gameBox.appendChild(splashImg);
+}
+
+function initGame(image) {
     class Board {
         constructor(imgNWidth, imgNHeight, rowCols) {
             if (Board._instance) {
@@ -54,7 +65,7 @@ function initGame() {
     var img = new Image();
     img.crossOrigin = "Anonymous";
     img.onload = cutImageIntoPieces;
-    img.src = `${choseImage()}`;
+    img.src = `${image}`;
     
     function cutImageIntoPieces() {
         board = new Board(this.naturalWidth, this.naturalHeight, difficultyGame);
