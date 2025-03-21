@@ -1,19 +1,43 @@
-const gameBtns = [...document.querySelectorAll('.game__btn')]; //  Game difficulty buttons
+const startBtn = document.querySelector('.start');
+const controlPanel = document.querySelector('.game__control_panel');
+const gameBtns = [...document.querySelectorAll('.level-btn')]; //  Game difficulty buttons
+const restartBtn = document.querySelector('.restart');
+restartBtn.disabled = true;
+const changeImgBtn = document.querySelector('.change');
 let difficultyGame;
-const imgPuzzle = choseImage();
+let imgPuzzle; 
+if (localStorage.getItem("imgPuzzle")) {
+    imgPuzzle = localStorage.getItem('currentImg');
+} else {
+    imgPuzzle = choseImage();
+    localStorage.setItem('currentImg', imgPuzzle);
+}
 
 createScreenSaver(); // puzzle image as a screensaver
 
+startBtn.addEventListener('click', ()=> {
+    startBtn.classList.add('visually-hidden');
+    controlPanel.classList.add('open');
+
+});
 gameBtns.forEach(btn => {
     btn.addEventListener('click', function(){
         if (btn.classList.contains('easy')) difficultyGame = 2;
         if (btn.classList.contains('middle')) difficultyGame = 3;
         if (btn.classList.contains('hard')) difficultyGame = 4;
-
         document.querySelector('.game__screen-saver').remove();
         initGame(imgPuzzle);
     });
-})
+});
+
+changeImgBtn.addEventListener('click', ()=>{
+    localStorage.removeItem('currentImg');
+    window.location.reload();
+});
+
+restartBtn.addEventListener('click', ()=>{
+    window.location.reload();
+});
 
 function choseImage() {
     let images = [];
@@ -36,6 +60,7 @@ function createScreenSaver() {
 }
 
 function initGame(image) {
+    restartBtn.disabled = false;
     class Board {
         constructor(imgNWidth, imgNHeight, rowCols) {
             if (Board._instance) {
@@ -46,7 +71,7 @@ function initGame(image) {
             //puzzle size
             this.width = 600,
             this.height = 600,
-            //siaze of each piece of original image
+            //size of each piece of original image
             this.widthIP = Math.floor(imgNWidth / this.rowCols),
             this.heightIP = Math.floor(imgNHeight / this.rowCols),
             // size of each tile of the puzzle
