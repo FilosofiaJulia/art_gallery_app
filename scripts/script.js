@@ -102,6 +102,7 @@ function createCardsList() {
                 favoriteArt.title = artWorkData[i].title;
                 favoriteArt.artist_title = artWorkData[i].artist_title;
                 favoriteArt.date_display = artWorkData[i].date_display;
+                favoriteArt.description = artWorkData[i].description;
                 favoriteArt.image = `${dataConfig.iiif_url}/${artWorkData[i].image_id}/full/843,/0/default.jpg`;
                 addFavorite(favoriteArt);
                 likeBtn.classList.add("shake"); // Добавляем анимацию для кнопок-лайков
@@ -148,11 +149,13 @@ function createFavoriteCard(favoriteArt) {
     
     deleteBtn.addEventListener('click', () => {
         removeFavorite(favoriteCard);
+        favoriteCard.removeEventListener("click", openFavoriteCard);
     });
 
     let hover = gsap.to(favoriteCard, {rotationX: 10, rotationY: -10, duration: 0.4, paused: true, ease: "power1.inOut"});
         favoriteCard.addEventListener("mouseenter", () => hover.play());
         favoriteCard.addEventListener("mouseleave", () => hover.reverse());
+        favoriteCard.addEventListener("click", openLikedCardPopup);
 }
 
 // Извлекает данные из localStorage или возвращает пустой массив
@@ -292,6 +295,73 @@ function popupSliderHandler() {
         if(e.code === "Escape" && !popupSlider.classList.contains('visually-hidden')) {
             closePopupSlider();
         }
+    }
+}
+
+/* popup with favorite art */
+
+function createLikedCardPopup(favoriteArt) {
+    let likedCardPopup = createElem('div','popup liked-card-popup liked-card-popup_js');
+    let likedCardWrapper = createElem('div','popup__inner');
+    let closeBtn = createElem('button', 'popup__close-btn liked-card-popup__close-btn popup__close-btn_js');
+    let likedCard = createElem('div', 'liked-card');
+    let title = createElem('p', 'liked-card__title');
+    title.textContent = `${favoriteArt.title || 'unknown'}`;
+    let artist = createElem('p', 'liked-card__artist');
+    artist.textContent = `${favoriteArt.artist_title || 'unknown'}`;
+    let years = createElem('p', 'liked-card__years');
+    years.textContent = `${favoriteArt.date_display || 'unknown'}`;
+    let description = createElem('p', 'liked-card__desc');
+    description.innerHTML = `${favoriteArt.description || 'unknown'}`;
+    let img = document.createElement('img');
+    img.className = 'liked-card__img';
+    img.setAttribute('src', `${favoriteArt.image}`);
+    img.setAttribute('alt', `${favoriteArt.title}`);
+    likedCard.appendChild(title);
+    likedCard.appendChild(artist);
+    likedCard.appendChild(years);
+    likedCard.appendChild(description);
+    likedCardWrapper.appendChild(img);
+    likedCardWrapper.appendChild(likedCard);
+    likedCardPopup.appendChild(closeBtn);
+    likedCardPopup.appendChild(likedCardWrapper);
+    return likedCardPopup;
+}
+
+function openLikedCardPopup(e) {
+    let collection = document.querySelector('#my_collection .collection__list');
+    let favorites = getFavorites();
+    if(favorites.length === 0) return;
+    if(collection.querySelector('li') === null) return;
+    if(collection.querySelector('li') !== null) console.log('not empty');
+    let popup;
+
+    let favoritesIds = Object.keys(favorites); // получаем все id имеющиеся в хранилище
+    let currentCardId = this.dataset.id;
+
+    if(favoritesIds.includes(currentCardId)) {
+        popup = createLikedCardPopup(favorites[currentCardId]);
+        collection.appendChild(popup);
+    }
+
+    let closeBtnPopup = popup.querySelector('.popup__close-btn_js');
+    window.scrollTo(0, 0);
+    document.body.classList.add('no-scroll');
+    window.addEventListener('keydown', escDeletePopup);
+    
+    if(closeBtnPopup) { 
+        closeBtnPopup.addEventListener('click', ()=> {
+            document.body.classList.remove('no-scroll');
+            popup.remove();
+        });
+    }
+}
+
+function escDeletePopup(e) {
+    let popup = document.querySelector('.liked-card-popup_js');
+    if(e.code === "Escape" && popup) {
+        document.body.classList.remove('no-scroll');
+        popup.remove();
     }
 }
 
