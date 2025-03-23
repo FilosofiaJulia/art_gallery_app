@@ -177,9 +177,8 @@ function initGame(image) {
             canvas.removeEventListener('click', move);
             drawLastTile();
             localStorage.removeItem('currentImg');
-            //TODO: popup with text cogratulations!
             controlPanel.classList.remove('open');
-            setTimeout(()=> window.location.reload(), 5000);
+            setTimeout(()=> initFireworkAnimation(), 500); // start animation fireworks
         }
     }
     
@@ -233,4 +232,108 @@ function initGame(image) {
         }
         imgObj.src = imgUrl;
     }
+}
+
+/* Animation fireworks */
+function initFireworkAnimation() {
+    const fireworksCanvas = document.getElementById("fireworksCanvas");
+    fireworksCanvas.style.zIndex = 100;
+    const context = fireworksCanvas.getContext("2d");
+    fireworksCanvas.width = window.innerWidth;
+    fireworksCanvas.height = window.innerHeight;
+
+    window.addEventListener("resize", () => {
+        fireworksCanvas.width = window.innerWidth;
+        fireworksCanvas.height = window.innerHeight;
+    });
+
+    class Particle {
+        constructor(x, y, color, size, speedX, speedY) {
+            this.x = x;
+            this.y = y;
+            this.color = color;
+            this.size = size;
+            this.speedX = speedX;
+            this.speedY = speedY;
+            this.life = 100;
+        }
+
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            this.speedY += 0.02;
+            this.life -= 1;
+        }
+
+        draw() {
+            context.beginPath();
+            context.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            context.fillStyle = this.color;
+            context.fill();
+            context.font = "30px Montserrat Alternates";
+            context.strokeStyle = "#f5ecec";
+            context.textAlign = "center";
+            context.strokeText("Congratulations!", fireworksCanvas.width/2, fireworksCanvas.height/2);
+        }
+    }
+
+    class Firework {
+        constructor(x, y) {
+            this.x = x;
+            this.y = y;
+            this.particles = [];
+            this.explode();
+        }
+
+        explode() {
+            const colors = ["#ff0000", "#ff8800", "#ffcc00", "#00ff00", "#00aaff", "#9900ff"];
+            for (let i = 0; i < 50; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 3 + 2;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                this.particles.push(new Particle(
+                    this.x, this.y, color, 2,
+                    Math.cos(angle) * speed,
+                    Math.sin(angle) * speed
+                ));
+            }
+        }
+
+        update() {
+            this.particles = this.particles.filter(p => p.life > 0);
+            this.particles.forEach(p => p.update());
+        }
+
+        draw() {
+            this.particles.forEach(p => p.draw());
+        }
+    }
+
+    const fireworks = [];
+
+    function createRandomFirework() {
+        const x = Math.random() * fireworksCanvas.width;
+        const y = Math.random() * (fireworksCanvas.height / 2);
+        fireworks.push(new Firework(x, y));
+    }
+
+    function animate() {
+        context.fillStyle = "rgba(47, 67, 39, 1)";
+        context.fillRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
+
+        fireworks.forEach(f => f.update());
+        fireworks.forEach(f => f.draw());
+
+        requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    let interval = setInterval(createRandomFirework, 500);
+    setTimeout(() => {
+        clearInterval(interval);
+        window.location.reload();
+    }, 10000);
+
+    fireworksCanvas.addEventListener('click', ()=> {window.location.reload();});
 }

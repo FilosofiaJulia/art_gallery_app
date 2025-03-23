@@ -50,17 +50,20 @@
             </div>
         </div>
     </header>
-    <div class = 'game__wrapper'>
-        <button class="game__start-btn start">start</button>
-        <div class="game__control_panel">
-            <button class = 'game__btn level-btn easy'>easy</button>
-            <button class = 'game__btn level-btn middle'>middle</button>
-            <button class = 'game__btn level-btn hard'>hard</button>
-            <button class = 'game__btn change'>change</button>
-            <button class = 'game__btn restart' disabled>restart</button>
+    <main>
+        <div class = 'game__wrapper'>
+            <button class="game__start-btn start">start</button>
+            <div class="game__control_panel">
+                <button class = 'game__btn level-btn easy'>easy</button>
+                <button class = 'game__btn level-btn middle'>middle</button>
+                <button class = 'game__btn level-btn hard'>hard</button>
+                <button class = 'game__btn change'>change</button>
+                <button class = 'game__btn restart' disabled>restart</button>
+            </div>
+            <canvas class="game"></canvas>
         </div>
-        <canvas class="game"></canvas>
-    </div>
+    </main>
+    <canvas class="fireworks" id="fireworksCanvas"></canvas>
     <script src="../scripts/game.js"></script>
 </body>
 </html>
