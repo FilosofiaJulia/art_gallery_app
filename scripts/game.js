@@ -3,9 +3,12 @@ const controlPanel = document.querySelector('.game__control_panel');
 const gameBtns = [...document.querySelectorAll('.level-btn')]; //  Game difficulty buttons
 const restartBtn = document.querySelector('.restart');
 restartBtn.disabled = true;
-const changeImgBtn = document.querySelector('.change');
+const cancelBtn = document.querySelector('.game__cancel-btn');
+const exitBtn = document.querySelector('.exit');
 let difficultyGame;
 let currentImgPuzzle = localStorage.getItem('currentImg');
+
+// set default image as a current image
 if(!localStorage.getItem('currentImg')) {
     currentImgPuzzle = choseImage();
     localStorage.setItem('currentImg', currentImgPuzzle);
@@ -15,7 +18,18 @@ createScreenSaver(currentImgPuzzle); // puzzle image as a screensaver
 
 startBtn.addEventListener('click', ()=> {
     startBtn.classList.add('visually-hidden');
+    cancelBtn.classList.add('visually-hidden');
     controlPanel.classList.add('open');
+});
+
+cancelBtn.addEventListener('click', ()=> {
+    if (hasFavoriteArts() === false) {
+        console.log('empty');
+        createHint(cancelBtn);
+    } else {
+        localStorage.removeItem('currentImg');
+        window.location.reload();
+    }
 });
 
 gameBtns.forEach(btn => {
@@ -28,7 +42,7 @@ gameBtns.forEach(btn => {
     });
 });
 
-changeImgBtn.addEventListener('click', ()=>{
+exitBtn.addEventListener('click', ()=>{
     localStorage.removeItem('currentImg');
     window.location.reload();
 });
@@ -36,26 +50,6 @@ changeImgBtn.addEventListener('click', ()=>{
 restartBtn.addEventListener('click', ()=>{
     window.location.reload();
 });
-
-function choseImage() {
-    let images = [];
-    let favoriteArts = JSON.parse(localStorage.getItem('favoriteArts')) || {};
-    let arts = Object.values(favoriteArts);
-    arts.forEach(art => {
-        images.push(art.image);
-    });
-    let randomImage = (images.length !== 0) ? images[Math.floor(Math.random()*images.length)] : '../image/defalt_img.jpg';
-
-    return randomImage;
-}
-
-function createScreenSaver(img) {
-    const gameBox = document.querySelector('.game__wrapper');
-    let splashImg = document.createElement('img');
-    splashImg.className = 'game__screen-saver';
-    splashImg.setAttribute('src', `${img}`);
-    gameBox.appendChild(splashImg);
-}
 
 function initGame(image) {
     restartBtn.disabled = false;
@@ -238,6 +232,7 @@ function initGame(image) {
 function initFireworkAnimation() {
     const fireworksCanvas = document.getElementById("fireworksCanvas");
     fireworksCanvas.style.zIndex = 100;
+    fireworksCanvas.style.animation = 'open 0.8s ease forwards';
     const context = fireworksCanvas.getContext("2d");
     fireworksCanvas.width = window.innerWidth;
     fireworksCanvas.height = window.innerHeight;
@@ -336,4 +331,41 @@ function initFireworkAnimation() {
     }, 10000);
 
     fireworksCanvas.addEventListener('click', ()=> {window.location.reload();});
+}
+
+/* hint */
+function createHint(elem) {
+    let hint = document.createElement('div');
+    hint.className = 'game__hint';
+    hint.textContent = 'There are no other images! Add your favorite paintings!';
+    elem.appendChild(hint);
+    setTimeout(()=>{hint.remove()}, 3000);
+}
+
+/* helpers */
+
+function choseImage() {
+    let images = [];
+    let favoriteArts = JSON.parse(localStorage.getItem('favoriteArts')) || {};
+    let arts = Object.values(favoriteArts);
+    arts.forEach(art => {
+        images.push(art.image);
+    });
+    let randomImage = (images.length !== 0) ? images[Math.floor(Math.random()*images.length)] : '../image/defalt_img.jpg';
+
+    return randomImage;
+}
+
+function createScreenSaver(img) {
+    const gameBox = document.querySelector('.game__wrapper');
+    let splashImg = document.createElement('img');
+    splashImg.className = 'game__screen-saver';
+    splashImg.setAttribute('src', `${img}`);
+    gameBox.appendChild(splashImg);
+}
+
+function hasFavoriteArts() {
+    let favoriteArts = JSON.parse(localStorage.getItem('favoriteArts')) || {};
+    if (Object.keys(favoriteArts).length === 0) return false;
+    return true;
 }

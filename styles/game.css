@@ -7,8 +7,10 @@
     position: relative;
 }
 
-.game__start-btn {
-    padding: 15px 30px;
+.game__start-btn,
+.game__cancel-btn {
+    padding: 15px 25px;
+    width: 150px;
     font-size: 20px;
     color: #fff;
     background-color: #28a745;
@@ -22,12 +24,40 @@
     animation: pulse 1.5s infinite;
 }
 
-.game__start-btn:hover {
+.game__start-btn:hover,
+.game__cancel-btn:hover {
     background-color: #218838;
 }
 
-.game__start-btn:active {
+.game__start-btn:active,
+.game__cancel-btn:active {
     background-color: #1e7e34;
+}
+
+.game__hint {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    width: 250px;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 50px;
+    background-color: rgba(47, 67, 39, 0.5);
+    text-transform: none;
+    animation: flash 3s ease 0.2s;
+    opacity: 0;
+}
+
+@keyframes flash {
+    0% {
+        opacity: 0;
+    }
+    30%,50%,70% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
 }
 
 .game__control_panel {
@@ -94,4 +124,14 @@
     width: 100vw;
     height: 100vh;
     z-index: -1;
+    opacity: 0;
+}
+
+@keyframes open {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
