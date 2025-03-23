@@ -120,7 +120,6 @@ ul {
   box-sizing:border-box;
   width: 300px;
   height: 150px;
-  max-width: calc(100% / 4 - 20px);
   background-color: var(--card-bg);
   border-radius: 10px;
   cursor: pointer;
@@ -163,7 +162,7 @@ ul {
 
 .card__description {
   position: absolute;
-  bottom: 0;
+  top: 1px;
   left: 0;
   right: 0;
   border-radius: 10px;
@@ -247,7 +246,7 @@ ul {
   color: var(--text);
 }
 
-/*  SLIDER */
+/*  SLIDER and POPUP WITH FAVORITE ART*/
 
 .popup {
   position: absolute;
@@ -297,10 +296,12 @@ ul {
   background: linear-gradient(to bottom, rgba(47, 67, 39, 1) 0%, rgba(47, 67, 39, 1) 50%, rgb(47, 67, 39, 0.5) 100%);
   box-shadow: 15px 15px 13px rgba(47, 67, 39, 0.5);
 }
+
 .liked-card__img {
   display: block;
   cursor: help;
 }
+
 .liked-card__img:hover + .liked-card {
   top: 0;
   transform: rotate(0);
@@ -550,3 +551,77 @@ ul {
 		background-position: 0% 0%;
 	}
 }
+
+@media (max-width: 600px) { 
+  .container {
+    max-width: 600px;
+  }
+  .header {
+    flex-direction: column;
+  }
+  .header__list {
+    padding: 0;
+    justify-content: space-between;
+  }
+  .artworks__list, .collection__list {
+    flex-flow: column wrap;
+    justify-content: center;
+    justify-content: center;
+    align-items:center;
+    gap: 20px;
+    color: var(--accent);
+    font-weight: 400;
+    font-size: 20px;
+  }
+  
+  .card {
+    
+    width: 350px;
+    height: 200px;
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    cursor: pointer;
+    will-change: transform;
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    perspective:400px;
+    -webkit-transform: perspective(400px) rotateY(0deg) rotateX(0deg);
+    transform: perspective(400px) rotateY(0deg) rotateX(0deg);
+  }
+  
+  .card__img {
+    width: 350px;
+    height: 200px;
+  }
+  
+  .card p {
+    font-size: 16px;
+  }
+  
+  .popup__inner {
+    position: relative;
+    box-sizing: border-box;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 1200px;
+    width: 100%;
+    height: 100vh;
+  }
+  
+  .liked-card {
+    padding: 15px;
+  }
+
+  .liked-card__img {
+    display: block;
+    cursor: help;
+    width: 100%;
+    height: auto;
+  }
+  
+  .liked-card p {
+    font-size: 12px;
+  }
+} 
