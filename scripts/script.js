@@ -14,7 +14,9 @@ function sendRequest({url}) {
 function getArtWorks() {
     const paramFields = 'id,title,image_id,date_start,date_end,date_display,artist_title,description,artwork_type_title';
     const paramLimit = '100';
-    const queryParams = '?page=3&limit=' + paramLimit + '&fields=' + paramFields;
+    let paramPage = 1;
+    const queryParams = '?page=' + paramPage + '&limit=' + paramLimit + '&fields=' + paramFields;
+
     sendRequest({url: ARTWORKS_SERVER_PATH + queryParams})
     .then((response) => {
         if (response.ok) {
@@ -27,6 +29,7 @@ function getArtWorks() {
         myData = data; 
         dataConfig = data.config; // для формирования ссылки на изображения
         artWorkData = data.data; // массив с данными о произведениях искусства
+        console.log(dataConfig);
         console.log(myData);
         initPage();
         createCardsList();
@@ -39,6 +42,12 @@ function getArtWorks() {
 }
 
 getArtWorks();
+
+const loadMoreBtn = document.querySelector('load-more-btn_js');
+loadMoreBtn.addEventListener('click', ()=>{
+    // по сути нужно снова запустить функцию getArtWorks(), но изменить page
+    // в dataConfig есть pagination.next__url - по факту это полная ссылка для sendRequest
+});
 
 function initPage() {
     const favorites = getFavorites();
@@ -350,7 +359,7 @@ function openLikedCardPopup(e) {
     img.addEventListener('click', () => {
         likedCardDesc.classList.toggle('switching');
     });
-    
+
     likedCardDesc.addEventListener('click', () => {
         likedCardDesc.classList.remove('switching');
     });

@@ -97,6 +97,9 @@ ul {
 /* LIST OF ARTS */
 
 .artworks {
+  display: flex;
+  flex-direction: column;
+  align-items:center;
   margin-top: 60px;
 }
 
@@ -110,6 +113,28 @@ ul {
   color: var(--accent);
   font-weight: 400;
   font-size: 20px;
+}
+
+.artworks__load-more {
+  padding: 15px 25px;
+  width: 150px;
+  font-size: 16px;
+  color: var(--card-bg);
+  background-color: #28a745;
+  margin: 20px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.artworks__load-more:hover {
+  background-color: #218838;
+}
+
+.artworks__load-more:active {
+  background-color: var(--accent);
 }
 
 .card {
