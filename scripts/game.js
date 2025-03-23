@@ -5,28 +5,26 @@ const restartBtn = document.querySelector('.restart');
 restartBtn.disabled = true;
 const changeImgBtn = document.querySelector('.change');
 let difficultyGame;
-let imgPuzzle; 
-if (localStorage.getItem("imgPuzzle")) {
-    imgPuzzle = localStorage.getItem('currentImg');
-} else {
-    imgPuzzle = choseImage();
-    localStorage.setItem('currentImg', imgPuzzle);
+let currentImgPuzzle = localStorage.getItem('currentImg');
+if(!localStorage.getItem('currentImg')) {
+    currentImgPuzzle = choseImage();
+    localStorage.setItem('currentImg', currentImgPuzzle);
 }
 
-createScreenSaver(); // puzzle image as a screensaver
+createScreenSaver(currentImgPuzzle); // puzzle image as a screensaver
 
 startBtn.addEventListener('click', ()=> {
     startBtn.classList.add('visually-hidden');
     controlPanel.classList.add('open');
-
 });
+
 gameBtns.forEach(btn => {
     btn.addEventListener('click', function(){
         if (btn.classList.contains('easy')) difficultyGame = 2;
         if (btn.classList.contains('middle')) difficultyGame = 3;
         if (btn.classList.contains('hard')) difficultyGame = 4;
         document.querySelector('.game__screen-saver').remove();
-        initGame(imgPuzzle);
+        initGame(currentImgPuzzle);
     });
 });
 
@@ -51,11 +49,11 @@ function choseImage() {
     return randomImage;
 }
 
-function createScreenSaver() {
+function createScreenSaver(img) {
     const gameBox = document.querySelector('.game__wrapper');
     let splashImg = document.createElement('img');
     splashImg.className = 'game__screen-saver';
-    splashImg.setAttribute('src', `${imgPuzzle}`);
+    splashImg.setAttribute('src', `${img}`);
     gameBox.appendChild(splashImg);
 }
 
@@ -174,13 +172,14 @@ function initGame(image) {
         const blankIdx = getIndexFromCoords(blankX, blankY);
     
         swapIndex(imgIdx, blankIdx);
-        // todo: logic to check if the puzzle is solved or not
     
         if(isSolved()) {
             canvas.removeEventListener('click', move);
             drawLastTile();
+            localStorage.removeItem('currentImg');
             //TODO: popup with text cogratulations!
-            setTimeout(()=> alert('Congratulations!'), 1000);
+            controlPanel.classList.remove('open');
+            setTimeout(()=> window.location.reload(), 5000);
         }
     }
     
