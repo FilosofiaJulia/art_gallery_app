@@ -344,6 +344,17 @@ function openLikedCardPopup(e) {
         collection.appendChild(popup);
     }
 
+    let img = popup.querySelector('.liked-card__img');
+    let likedCardDesc = popup.querySelector('.liked-card');
+
+    img.addEventListener('click', () => {
+        likedCardDesc.classList.toggle('switching');
+    });
+    
+    likedCardDesc.addEventListener('click', () => {
+        likedCardDesc.classList.remove('switching');
+    });
+
     let closeBtnPopup = popup.querySelector('.popup__close-btn_js');
     window.scrollTo(0, 0);
     document.body.classList.add('no-scroll');

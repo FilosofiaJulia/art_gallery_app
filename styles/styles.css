@@ -302,7 +302,7 @@ ul {
   cursor: help;
 }
 
-.liked-card__img:hover + .liked-card {
+.liked-card.switching {
   top: 0;
   transform: rotate(0);
 }
