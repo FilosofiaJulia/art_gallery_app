@@ -187,7 +187,7 @@ function addFavorite(favoriteArt) {
         favorites[`${favoriteArt.id}`] = favoriteArt;
         saveFavorites(favorites);
         createFavoriteCard(favoriteArt, dataConfig);
-        initPage();
+        updatefavoriteList();
     }
 }
 
@@ -207,7 +207,7 @@ function removeFavorite(favoriteCard) {
             favoriteCard.remove(); // удаляем элемент, если он действительно присутствует
         }
     }
-    initPage();
+    updatefavoriteList();
 }
 
 function createImage(className, config, data) {
