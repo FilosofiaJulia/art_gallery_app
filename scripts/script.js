@@ -6,6 +6,7 @@ var swiper;
 let myData;
 let dataConfig; // для формирования ссылки на изображения
 let artWorkData; // массив с данными о произведениях искусства
+let currentPage = 1;
 
 function sendRequest({url}) {
     return fetch(url);
@@ -14,12 +15,13 @@ function sendRequest({url}) {
 function getArtWorks() {
     const paramFields = 'id,title,image_id,date_start,date_end,date_display,artist_title,description,artwork_type_title';
     const paramLimit = '100';
-    let paramPage = 1;
+    let paramPage = currentPage;
     const queryParams = '?page=' + paramPage + '&limit=' + paramLimit + '&fields=' + paramFields;
 
     sendRequest({url: ARTWORKS_SERVER_PATH + queryParams})
     .then((response) => {
         if (response.ok) {
+            currentPage++;
             return response.json();
         }
         return Promise.reject(response);
@@ -29,9 +31,7 @@ function getArtWorks() {
         myData = data; 
         dataConfig = data.config; // для формирования ссылки на изображения
         artWorkData = data.data; // массив с данными о произведениях искусства
-        console.log(dataConfig);
-        console.log(myData);
-        initPage();
+        updatefavoriteList();
         createCardsList();
         popupSliderHandler();
     })
@@ -43,13 +43,12 @@ function getArtWorks() {
 
 getArtWorks();
 
-const loadMoreBtn = document.querySelector('load-more-btn_js');
+const loadMoreBtn = document.querySelector('.load-more-btn_js');
 loadMoreBtn.addEventListener('click', ()=>{
-    // по сути нужно снова запустить функцию getArtWorks(), но изменить page
-    // в dataConfig есть pagination.next__url - по факту это полная ссылка для sendRequest
+    getArtWorks();
 });
 
-function initPage() {
+function updatefavoriteList() {
     const favorites = getFavorites();
     let listOfFavoriteCards = document.querySelector('.collection__list');
     let artWorkCards = document.querySelectorAll('.artworks__list .card');
